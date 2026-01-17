@@ -53,6 +53,7 @@ class SQLiScanner:
         self.verbose = verbose
         self.vulnerabilities_found = []
         self.forms_tested = 0
+        self.findings = []
         
     def get_forms(self, url):
         """Extract all forms from the given URL"""
@@ -63,6 +64,29 @@ class SQLiScanner:
         except Exception as e:
             print(f"{Fore.RED}✗ Error fetching forms: {e}")
             return []
+
+    def export_json_report(self, path: str, pretty: bool = False):
+    report = {
+        "meta": {
+            "tool": "sqli-scanner",
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "mode": "detection-only"
+        },
+        "target": {
+            "url": self.url
+        },
+        "summary": {
+            "total_findings": len(self.findings)
+        },
+        "findings": self.findings
+    }
+
+    with open(path, "w", encoding="utf-8") as f:
+        if pretty:
+            json.dump(report, f, indent=2, ensure_ascii=False)
+        else:
+            json.dump(report, f, separators=(",", ":"), ensure_ascii=False)
+
     
     def get_form_details(self, form):
         """Extract form details like action, method, and inputs"""
@@ -138,6 +162,28 @@ class SQLiScanner:
                         "inputs_tested": list(data.keys())
                     }
                     vulnerabilities.append(vuln_info)
+                    self.findings.append({
+                    "finding_id": f"SQLI-{len(self.findings) + 1:02d}",
+                    "type": "SQL Injection (error-based heuristic)",
+                    "severity": "High",
+                    "url": url,
+                    "form": {
+                    "action": target_url,
+                    "method": form_details["method"].upper(),
+                    "inputs_tested": list(data.keys())
+                     },
+                    "payload": payload,
+                    "evidence": {
+                    "error_pattern": error_pattern
+                     },
+                    "recommendations": [
+                    "Use parameterized queries / prepared statements",
+                    "Apply strict server-side input validation",
+                    "Disable detailed database error messages in production",
+                    "Consider using a Web Application Firewall (WAF)"
+                     ]
+                    })
+
                     
                     if self.verbose:
                         print(f"{Fore.RED}  ✗ VULNERABLE - Payload: {payload[:30]}...")
@@ -238,6 +284,10 @@ def main():
     # Create scanner and run
     scanner = SQLiScanner(args.url, timeout=args.timeout, verbose=args.verbose)
     scanner.scan()
+    
+    if args.json_path:
+        scanner.export_json_report(args.json_path, pretty=args.pretty)
+        print(f"\n🧾 JSON report saved to: {args.json_path}")
 
 
 if __name__ == "__main__":
