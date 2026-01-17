@@ -20,9 +20,7 @@ SQL injection remains one of the most critical web vulnerabilities (OWASP Top 10
 
 ## Installation
 
-**Requirements:**
-- Python 3.7+
-- Required libraries: requests, beautifulsoup4, colorama
+pip install -r requirements.txt
 
 **Setup:**
 ```bash
