@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 import argparse
 import sys
+import json
 from colorama import Fore, Style, init
 from datetime import datetime
 
