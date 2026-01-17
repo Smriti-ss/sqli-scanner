@@ -54,6 +54,28 @@ class SQLiScanner:
         self.vulnerabilities_found = []
         self.forms_tested = 0
         self.findings = []
+
+    def export_json_report(self, path: str, pretty: bool = False):
+        report = {
+            "meta": {
+                "tool": "sqli-scanner",
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "mode": "detection-only"
+            },
+            "target": {
+                "url": self.url
+            },
+            "summary": {
+                "total_findings": len(self.findings)
+            },
+            "findings": self.findings
+        }
+
+        with open(path, "w", encoding="utf-8") as f:
+            if pretty:
+                json.dump(report, f, indent=2, ensure_ascii=False)
+            else:
+                json.dump(report, f, separators=(",", ":"), ensure_ascii=False)
         
     def get_forms(self, url):
         """Extract all forms from the given URL"""
@@ -64,28 +86,6 @@ class SQLiScanner:
         except Exception as e:
             print(f"{Fore.RED}✗ Error fetching forms: {e}")
             return []
-
-    def export_json_report(self, path: str, pretty: bool = False):
-    report = {
-        "meta": {
-            "tool": "sqli-scanner",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-            "mode": "detection-only"
-        },
-        "target": {
-            "url": self.url
-        },
-        "summary": {
-            "total_findings": len(self.findings)
-        },
-        "findings": self.findings
-    }
-
-    with open(path, "w", encoding="utf-8") as f:
-        if pretty:
-            json.dump(report, f, indent=2, ensure_ascii=False)
-        else:
-            json.dump(report, f, separators=(",", ":"), ensure_ascii=False)
 
     
     def get_form_details(self, form):
