@@ -224,6 +224,9 @@ def main():
     parser.add_argument("url", help="Target URL to scan (e.g., http://testphp.vulnweb.com)")
     parser.add_argument("--timeout", type=int, default=10, help="Request timeout in seconds (default: 10)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    parser.add_argument("--json", dest="json_path", help="Write JSON report to a file (e.g., report.json)")
+    parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output (use with --json)")
+
     
     args = parser.parse_args()
     
