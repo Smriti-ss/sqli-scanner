@@ -5,7 +5,7 @@ import argparse
 import sys
 import json
 from colorama import Fore, Style, init
-from datetime import datetime
+from datetime import datetime, timezone
 
 # Initialize colorama for colored output
 init(autoreset=True)
