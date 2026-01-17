@@ -1,3 +1,7 @@
+![Python](https://img.shields.io/badge/python-3.7+-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Status](https://img.shields.io/badge/status-active-success.svg)
+
 # SQL Injection Scanner
 
 A lightweight Python tool that detects potential SQL Injection (SQLi) vulnerabilities by automatically testing HTML form inputs with common SQLi payloads and identifying database error patterns in responses.
