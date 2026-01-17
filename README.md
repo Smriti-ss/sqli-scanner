@@ -1,19 +1,32 @@
 # SQL Injection Scanner
 
-An automated Python tool that detects SQL injection vulnerabilities in web applications by testing forms with common SQLi payloads and analyzing error patterns.
+A lightweight Python tool that detects potential SQL Injection (SQLi) vulnerabilities by automatically testing HTML form inputs with common SQLi payloads and identifying database error patterns in responses.
+
+⚠️ **IMPORTANT:** Authorized use only — scan applications you own or have explicit permission to test.
 
 ## Purpose
 
 SQL injection remains one of the most critical web vulnerabilities (OWASP Top 10). This scanner helps security professionals identify SQLi vulnerabilities during penetration testing and security audits.
 
-**IMPORTANT:** Only use this tool on websites you own or have explicit permission to test. Unauthorized security testing is illegal.
+## Why this Project?
+
+SQL Injection remains one of the most prevalent and high-impact web vulnerabilities.
+This project was built to demonstrate:
+-Application Security (AppSec) fundamentals
+-Automated vulnerability detection workflows
+-Safe, non-exploitative testing techniques
+-Professional security reporting (JSON + Markdown)
+
+The focus is on detection and analysis, not exploitation.
 
 ## Features
 
 - **Automatic form detection** - Finds and extracts all forms from target URLs
 - **14 SQLi payload testing** - Tests common injection patterns
-- **Error-based detection** - Identifies vulnerabilities through SQL error patterns
+- **Error-based detection** - Identifies vulnerabilities through SQL error patterns (MySQL, MSSQL, PostgreSQL signatures)
+- **JSON report export** - For dashboards or further analysis
 - **Colored output** - Clear, readable results with color-coded findings
+- **Sample assessment report** - Included (docs/sample-report.md)
 - **Detailed reporting** - Shows vulnerable forms, payloads, and affected fields
 - **Security recommendations** - Provides remediation guidance
 - **Verbose mode** - Optional detailed logging for testing
@@ -40,64 +53,45 @@ python sqli_scanner.py http://testphp.vulnweb.com
 ```bash
 python sqli_scanner.py http://testphp.vulnweb.com --verbose
 ```
+### JSON Report Output
+Generate a structured JSON report for integration with security workflows or dashboards:
+```bash
+python ./sqli_scanner.py http://testphp.vulnweb.com --json report.json --pretty
+```
+
+--json report.json → writes findings to file
+
+--pretty → human-readable formatted JSON
+
+Generated reports are ignored via .gitignore to keep the repo clean.
 
 ### Custom timeout:
 ```bash
 python sqli_scanner.py http://testphp.vulnweb.com --timeout 15
 ```
 
-## Example Output
-```
-======================================================================
-SQL INJECTION SCANNER
-======================================================================
-
-Target: http://testphp.vulnweb.com
-Started: 2026-01-17 00:51:18
-
-⚠ WARNING: Only scan websites you own or have permission to test!
-======================================================================
-
-→ Searching for forms...
-✓ Found 1 form(s) to test
-
-→ Testing form #1
-  Action: http://testphp.vulnweb.com/search.php?test=query
-  Method: POST
-  ✗ VULNERABLE - Payload: ' OR '1'='1' --...
-    Error pattern detected: you have an error in your sql syntax
-
-======================================================================
-SCAN RESULTS
-======================================================================
-
-Forms tested: 1
-Payloads per form: 14
-
-⚠ VULNERABILITIES FOUND: 1
-
-Vulnerability #1:
-  Form: http://testphp.vulnweb.com/search.php?test=query
-  Method: POST
-  Payload: ' OR '1'='1' --
-  Error Pattern: you have an error in your sql syntax
-  Vulnerable Fields: searchFor
-
-======================================================================
-RECOMMENDATION:
-  - Use parameterized queries/prepared statements
-  - Implement input validation and sanitization
-  - Use an ORM framework with built-in protections
-  - Apply principle of least privilege for database access
-======================================================================
-```
-
 ## How It Works
 
-1. **Form Discovery**: Scrapes the target URL and extracts all HTML forms
-2. **Payload Injection**: Tests each form input with 14 common SQLi payloads
-3. **Error Detection**: Analyzes responses for SQL error patterns
-4. **Result Reporting**: Displays vulnerable forms with detailed information
+1. Fetch target page
+2. Discover HTML forms
+3. Inject SQLi payloads into form fields
+4. Submit GET/POST requests
+5. Analyze responses for SQL error patterns
+6. Record findings and export results
+
+## Sample Findings
+
+Each finding includes:
+-Affected URL & form action
+-HTTP method
+-Vulnerable input fields
+-Payload used
+-Detected error pattern
+-Severity classification
+-Mitigation recommendations
+
+See:
+📁 docs/sample-report.md
 
 ## Testing Payloads
 
@@ -138,11 +132,16 @@ Practice on these legal, deliberately vulnerable sites:
 - **HTTP protocols**: Working with GET/POST requests and form submissions
 - **Error pattern recognition**: Identifying SQL errors across different database systems
 - **Security best practices**: Ethical testing, responsible disclosure, and remediation
+- **JSON Reporting**: Security workflows for reporting result
 - **Python development**: Building CLI tools with argparse, error handling, and colored output
 
 ## Related Blog
 
 - Read my Medium article: [SQL Injection Didn't Die — It Got Smarter with AI](#) *((https://medium.com/meetcyber/sql-injection-didnt-die-it-got-smarter-with-ai-fe21ac195be9))*
+
+## License
+
+MIT License — see LICENSE
 
 ## Disclaimer
 
